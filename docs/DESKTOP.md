@@ -83,6 +83,22 @@ sunoplusplus-firefox-X.Y.Z.zip
 
 5. **Deep links:** everything in the catalog is already bundled, so `suno-desktop://plugin/install?id=<id>` and `suno-desktop://theme/install?id=<id>` mean "turn this on". Confirm with the user first, and ignore ids that aren't in `catalog.json`.
 
+## Turning Suno++ off
+
+The app can't take back a script that already ran, so when the user turns Suno++ off it unregisters the injection entry and runs this once in the plugin world of the open page:
+
+```js
+const key = Symbol.for('sunoplusplus.runtime')
+const installed = globalThis[key]
+if (installed) {
+  globalThis[key] = undefined
+  installed.runtime?.stop?.()
+  installed.dispose?.()
+}
+```
+
+This relies on what the bundle leaves under `Symbol.for('sunoplusplus.runtime')`: an object with `version`, `runtime.stop()`, `dispose()` and `current()`. Keep those names working in future versions, or older Suno Desktop builds won't be able to turn Suno++ off without a reload. Stopping removes every plugin's changes and the theme; nothing runs on later page loads.
+
 ## Trust model
 
 The downloaded bundle runs on suno.com in the app's isolated plugin world: it can do what a browser extension on suno.com could do (read and change Suno's pages while the user is signed in), but it gets no Node, no IPC and nothing outside suno.com. Updates are as trustworthy as this repository's releases, the same model as the app's own updater: HTTPS from GitHub, files checked against the hashes in `desktop.json`. Everything in a release went through review here first. Signing releases with a key the app pins would add protection against a compromised release, and is a good next step.
