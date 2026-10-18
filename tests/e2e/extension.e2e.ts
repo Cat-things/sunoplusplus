@@ -293,7 +293,20 @@ describe('Suno++ desktop bundle', () => {
       }
     })
     const bundle = readFileSync(path.join(root, 'dist/desktop/sunoplusplus.js'), 'utf8')
-    const run = (state: unknown) =>
+    const { version } = JSON.parse(
+      readFileSync(path.join(root, 'dist/desktop/desktop.json'), 'utf8')
+    ) as { version: string }
+    // The same bundle stamped with a newer version, as if the app had downloaded an update.
+    const newer = bundle.replaceAll(JSON.stringify(version), JSON.stringify('99.0.0'))
+    expect(newer).not.toBe(bundle)
+    const runningVersion = () =>
+      page.evaluate(
+        () =>
+          (window as unknown as Record<symbol, { version?: string } | undefined>)[
+            Symbol.for('sunoplusplus.runtime')
+          ]?.version
+      )
+    const run = (state: unknown, js = bundle) =>
       page.evaluate(
         ({ js, config }) => {
           ;(window as unknown as Record<string, unknown>).__SUNOPLUSPLUS_DESKTOP__ = config
@@ -301,7 +314,7 @@ describe('Suno++ desktop bundle', () => {
           // eslint-disable-next-line @typescript-eslint/no-implied-eval
           ;(new Function(js) as () => void)()
         },
-        { js: bundle, config: { state } }
+        { js, config: { state } }
       )
     await run({ enabled: { 'now-playing-title': true }, theme: 'neon-accents' })
     await page.evaluate(() => {
@@ -311,8 +324,19 @@ describe('Suno++ desktop bundle', () => {
     })
     await page.waitForFunction(() => document.title === '♪ Desk Song — App')
     expect(await page.locator('#sunoplusplus-theme').count()).toBe(1)
+    expect(await runningVersion()).toBe(version)
 
-    await run({ enabled: { 'now-playing-title': false }, theme: null })
+    // An update: the newer bundle stops the old runtime and takes over without a reload.
+    await run({ enabled: { 'now-playing-title': true }, theme: 'neon-accents' }, newer)
+    expect(await runningVersion()).toBe('99.0.0')
+    expect(await page.locator('#sunoplusplus-theme').count()).toBe(1)
+    await page.evaluate(() => {
+      const emit = (window as unknown as { emitBridge: (e: string, p: unknown) => void }).emitBridge
+      emit('songChanged', { title: 'After Update', artist: 'App', album: '', artwork: [] })
+    })
+    await page.waitForFunction(() => document.title === '♪ After Update — App')
+
+    await run({ enabled: { 'now-playing-title': false }, theme: null }, newer)
     await page.waitForFunction(() => document.title === 'Suno')
     expect(await page.locator('#sunoplusplus-theme').count()).toBe(0)
     expect(await page.locator('style').count()).toBe(0)

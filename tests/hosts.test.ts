@@ -160,6 +160,19 @@ describe('desktop host', () => {
     expect(seen).toHaveLength(3)
   })
 
+  it('starts from what a previous version handed over, validated', () => {
+    const { bridge } = fakeBridge()
+    const host = createDesktopHost(bridge, () => memoryStorage(), {
+      song: { title: 'Still Playing', artist: 'Cat', album: '', artwork: [] },
+      playback: 'playing'
+    })
+    expect(host.currentSong()?.title).toBe('Still Playing')
+    expect(host.currentPlayback()).toBe('playing')
+    const junk = createDesktopHost(bridge, () => memoryStorage(), { song: 5, playback: 'loud' })
+    expect(junk.currentSong()).toBeNull()
+    expect(junk.currentPlayback()).toBe('none')
+  })
+
   it('validates song payloads instead of trusting them', () => {
     expect(toSong(null)).toBeNull()
     expect(toSong({ title: '', artist: '' })).toBeNull()

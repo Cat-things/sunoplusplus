@@ -34,15 +34,15 @@ Suno++ adds things to suno.com that Suno doesn't (yet), and lets you restyle it:
 
 This is the **base** of Suno++: the plugin and theme formats, the SDK, the runtime, the browser extension, the Suno Desktop bundle, and one starter plugin and theme. It is not in the browser stores yet.
 
-| Piece                                                 | State                                                        |
-| ----------------------------------------------------- | ------------------------------------------------------------ |
-| Plugin and theme formats, SDK, runtime                | ✅ Working, tested                                           |
-| Browser extension (Chrome, Edge, Brave, Firefox 128+) | ✅ Working, build from source or grab a CI build             |
-| Suno Desktop bundle                                   | ✅ Built and tested; the app side is the next step           |
-| Plugins in the catalog                                | 1: [Now playing in the tab title](plugins/now-playing-title) |
-| Themes in the catalog                                 | 1: [Neon accents](themes/neon-accents)                       |
-| Chrome Web Store / Firefox Add-ons                    | 🔜                                                           |
-| Marketplace website                                   | 🔜 (`dist/registry.json` is already generated for it)        |
+| Piece                                                 | State                                                                                                  |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Plugin and theme formats, SDK, runtime                | ✅ Working, tested                                                                                     |
+| Browser extension (Chrome, Edge, Brave, Firefox 128+) | ✅ Working, build from source or grab a CI build                                                       |
+| Suno Desktop                                          | ✅ Built in from Suno Desktop's next release (Settings → Plugins); updates itself from Suno++ releases |
+| Plugins in the catalog                                | 1: [Now playing in the tab title](plugins/now-playing-title)                                           |
+| Themes in the catalog                                 | 1: [Neon accents](themes/neon-accents)                                                                 |
+| Chrome Web Store / Firefox Add-ons                    | 🔜                                                                                                     |
+| Marketplace website                                   | 🔜 (`dist/registry.json` is already generated for it)                                                  |
 
 ## Try it
 
@@ -62,7 +62,9 @@ Then load the extension:
 
 Open suno.com, click the Suno++ icon in the toolbar and turn things on. Everything is **off until you turn it on**, and changes apply to open Suno tabs right away.
 
-Prefer not to build? Every [CI run](https://github.com/Cat-things/sunoplusplus/actions/workflows/ci.yml) uploads ready-to-load `suno-plus-plus-chrome` and `suno-plus-plus-firefox` builds.
+Prefer not to build? Every [release](https://github.com/Cat-things/sunoplusplus/releases/latest) has ready-to-load `sunoplusplus-chrome` and `sunoplusplus-firefox` zips.
+
+**In Suno Desktop** there's nothing to install: open Settings → Plugins and turn on Suno++. The app downloads it and keeps it up to date by itself.
 
 ## Make your own
 

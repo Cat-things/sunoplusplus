@@ -64,6 +64,10 @@ export function toSong(payload: unknown): Song | null {
   })
 }
 
+function isPlaybackState(value: unknown): value is PlaybackState {
+  return value === 'none' || value === 'paused' || value === 'playing'
+}
+
 function initialPlayback(): PlaybackState {
   const declared = navigator.mediaSession.playbackState
   return declared === 'playing' || declared === 'paused' ? declared : 'none'
@@ -75,14 +79,19 @@ function initialPlayback(): PlaybackState {
  */
 export function createDesktopHost(
   bridge: SunoDesktopBridge,
-  storage: (pluginId: string) => PluginStorage
+  storage: (pluginId: string) => PluginStorage,
+  /**
+   * What a previous Suno++ version on this page last saw. The bridge doesn't replay events, so
+   * without this an update would forget the song that's already playing.
+   */
+  handover?: { readonly song?: unknown; readonly playback?: unknown }
 ): Host & { dispose(): void } {
   const routes = new Emitter<Route>()
   const songs = new Emitter<Song | null>()
   const playbacks = new Emitter<PlaybackState>()
   let route = routeOf(location.href)
-  let song = readMediaSessionSong()
-  let playback = initialPlayback()
+  let song = toSong(handover?.song) ?? readMediaSessionSong()
+  let playback = isPlaybackState(handover?.playback) ? handover.playback : initialPlayback()
 
   const offs = [
     bridge.on('routeChanged', ({ url }) => {

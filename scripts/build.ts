@@ -3,12 +3,15 @@
  *
  *   dist/extension/chrome/   unpacked browser extension (Chrome, Edge, Brave, Opera)
  *   dist/extension/firefox/  unpacked browser extension (Firefox 128+)
- *   dist/desktop/            bundle + catalog.json for Suno Desktop (see docs/DESKTOP.md)
+ *   dist/desktop/            bundle, catalog.json and desktop.json for Suno Desktop (docs/DESKTOP.md)
  *   dist/registry.json       index of every plugin and theme, for the future marketplace
  *
  *   node scripts/build.ts            one-off build
  *   node scripts/build.ts --watch    rebuild on changes
+ *
+ * SUNOPLUSPLUS_VERSION=1.2.3 overrides the version (the release workflow sets it from git tags).
  */
+import { createHash } from 'node:crypto'
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import * as esbuild from 'esbuild'
@@ -25,6 +28,42 @@ const pluginsDir = path.join(root, 'plugins')
 export function packageVersion(): string {
   return (JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8')) as { version: string })
     .version
+}
+
+/** The version this build is stamped with: SUNOPLUSPLUS_VERSION, or package.json's. */
+export function buildVersion(): string {
+  const override = process.env.SUNOPLUSPLUS_VERSION
+  if (override === undefined || override === '') return packageVersion()
+  if (!/^\d+\.\d+\.\d+$/.test(override)) {
+    throw new Error(`SUNOPLUSPLUS_VERSION must be x.y.z, got "${override}"`)
+  }
+  return override
+}
+
+/** Format of desktop.json. Suno Desktop ignores releases with a format it doesn't know. */
+export const DESKTOP_FORMAT_VERSION = 1
+/** Oldest `window.sunoDesktop` bridge API the desktop bundle works with. */
+export const DESKTOP_BRIDGE_API = 1
+/** Oldest Suno Desktop that can load this bundle. */
+export const MIN_DESKTOP_VERSION = '0.1.0'
+
+const sha256 = (data: Buffer): string => createHash('sha256').update(data).digest('hex')
+
+/**
+ * desktop.json: what Suno Desktop's Suno++ updater reads from the latest release. The app
+ * downloads the files from the same release and checks their size and SHA-256 before using them.
+ */
+export function desktopManifest(version: string, bundle: Buffer, catalog: Buffer): object {
+  return {
+    formatVersion: DESKTOP_FORMAT_VERSION,
+    version,
+    bridgeApi: DESKTOP_BRIDGE_API,
+    minDesktopVersion: MIN_DESKTOP_VERSION,
+    files: {
+      bundle: { name: 'sunoplusplus.js', size: bundle.length, sha256: sha256(bundle) },
+      catalog: { name: 'catalog.json', size: catalog.length, sha256: sha256(catalog) }
+    }
+  }
 }
 
 /** JSON Schema files referenced by `$schema` in manifest.json. */
@@ -139,9 +178,11 @@ export function extensionBuildOptions(write = true): esbuild.BuildOptions {
   }
 }
 
-function desktopBuildOptions(): esbuild.BuildOptions {
+function desktopBuildOptions(version: string): esbuild.BuildOptions {
   return {
     ...common,
+    // The bundle compares versions to replace an older Suno++ already running on the page.
+    define: { __SUNOPLUSPLUS_VERSION__: JSON.stringify(version) },
     entryPoints: { sunoplusplus: path.join(root, 'packages/desktop/src/index.ts') },
     outdir: path.join(dist, 'desktop'),
     plugins: [catalogPlugin()]
@@ -215,7 +256,7 @@ function syncFirefoxPlugin(): esbuild.Plugin {
     setup(build) {
       build.onEnd((result) => {
         if (result.errors.length === 0 && build.initialOptions.write !== false)
-          syncFirefox(packageVersion())
+          syncFirefox(buildVersion())
       })
     }
   }
@@ -241,14 +282,14 @@ async function main(): Promise<void> {
     )
     process.exit(1)
   }
-  const version = packageVersion()
+  const version = buildVersion()
   rmSync(dist, { recursive: true, force: true })
   writeStaticFiles(version)
   writeOutputs(catalog, version)
   if (watch) {
     const contexts = await Promise.all([
       esbuild.context(extensionBuildOptions()),
-      esbuild.context(desktopBuildOptions())
+      esbuild.context(desktopBuildOptions(version))
     ])
     await Promise.all(contexts.map((c) => c.watch()))
     console.log(
@@ -257,7 +298,14 @@ async function main(): Promise<void> {
     return
   }
   await esbuild.build(extensionBuildOptions())
-  await esbuild.build(desktopBuildOptions())
+  await esbuild.build(desktopBuildOptions(version))
+  const desktopDir = path.join(dist, 'desktop')
+  const manifest = desktopManifest(
+    version,
+    readFileSync(path.join(desktopDir, 'sunoplusplus.js')),
+    readFileSync(path.join(desktopDir, 'catalog.json'))
+  )
+  writeFileSync(path.join(desktopDir, 'desktop.json'), `${JSON.stringify(manifest, null, 2)}\n`)
   const count = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
   console.log(
     `Built Suno++ ${version} with ${count(catalog.plugins.length, 'plugin')} and ${count(catalog.themes.length, 'theme')}:`

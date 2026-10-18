@@ -31,6 +31,8 @@ Be kind and constructive. Everyone here is doing this for fun.
 
 6. Open a pull request. One plugin or theme per pull request, please.
 
+Once it's merged, it ships in the next release automatically: Suno Desktop picks it up by itself within a few hours, and the extension zips are attached to the release.
+
 Not a coder? Share ideas in [Plugin ideas](https://github.com/Cat-things/suno-desktop/discussions/categories/plugin-ideas) or [Theme ideas](https://github.com/Cat-things/suno-desktop/discussions/categories/theme-ideas) and someone may build it.
 
 ## The rules

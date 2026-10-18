@@ -1,0 +1,68 @@
+# Publishes a release whenever plugins, themes or Suno++ itself change on main. Suno Desktop's
+# Suno++ updater reads desktop.json from the latest release, so merged plugins and themes reach
+# the app without a new Suno Desktop version.
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'plugins/**'
+      - 'themes/**'
+      - 'packages/**'
+      - 'scripts/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+  workflow_dispatch:
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Check
+        run: |
+          pnpm validate
+          pnpm test
+      - name: Pick the version
+        id: version
+        run: echo "version=$(node scripts/release.ts version)" >> "$GITHUB_OUTPUT"
+      - name: Build
+        run: pnpm build
+        env:
+          SUNOPLUSPLUS_VERSION: ${{ steps.version.outputs.version }}
+      - name: Package
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          mkdir -p release
+          (cd dist/extension/chrome && zip -qr "../../../release/sunoplusplus-chrome-$VERSION.zip" .)
+          (cd dist/extension/firefox && zip -qr "../../../release/sunoplusplus-firefox-$VERSION.zip" .)
+          cp dist/desktop/desktop.json dist/desktop/sunoplusplus.js dist/desktop/catalog.json dist/registry.json release/
+          node scripts/release.ts notes "$VERSION" > release-notes.md
+          ls -l release
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          gh release create "v$VERSION" release/* \
+            --title "Suno++ $VERSION" \
+            --notes-file release-notes.md \
+            --target "$GITHUB_SHA"
