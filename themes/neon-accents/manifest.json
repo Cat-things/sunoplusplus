@@ -1,0 +1,16 @@
+{
+  "$schema": "../../schemas/theme.schema.json",
+  "manifestVersion": 1,
+  "id": "neon-accents",
+  "name": "Neon accents",
+  "description": "Recolors text selection, focus rings, scrollbars, sliders and the text cursor in a color you pick. A small starter theme to build on.",
+  "version": "1.0.0",
+  "authors": [{ "name": "Suno++ team", "github": "Cat-things" }],
+  "license": "MIT",
+  "tags": ["starter", "accent"],
+  "appearance": "any",
+  "variables": [
+    { "key": "accent", "label": "Accent", "type": "color", "default": "#ff2e97" },
+    { "key": "on-accent", "label": "Text on accent", "type": "color", "default": "#ffffff" }
+  ]
+}

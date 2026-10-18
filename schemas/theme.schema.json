@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "manifestVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 48,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 48
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+    },
+    "authors": {
+      "minItems": 1,
+      "maxItems": 10,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "github": {
+            "type": "string",
+            "pattern": "^[a-z\\d](?:[a-z\\d]|-(?=[a-z\\d])){0,38}$"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "license": {
+      "type": "string",
+      "enum": [
+        "MIT",
+        "Apache-2.0",
+        "BSD-2-Clause",
+        "BSD-3-Clause",
+        "ISC",
+        "0BSD",
+        "Unlicense",
+        "CC0-1.0"
+      ]
+    },
+    "tags": {
+      "default": [],
+      "maxItems": 8,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 24,
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      }
+    },
+    "matches": {
+      "default": [
+        "https://suno.com/*"
+      ],
+      "minItems": 1,
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "appearance": {
+      "default": "any",
+      "type": "string",
+      "enum": [
+        "dark",
+        "light",
+        "any"
+      ]
+    },
+    "variables": {
+      "default": [],
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{0,39}$"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "type": {
+            "type": "string",
+            "const": "color"
+          },
+          "default": {
+            "type": "string",
+            "pattern": "^#[0-9a-f]{6}$"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "type",
+          "default"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "manifestVersion",
+    "id",
+    "name",
+    "description",
+    "version",
+    "authors",
+    "license"
+  ],
+  "additionalProperties": false
+}

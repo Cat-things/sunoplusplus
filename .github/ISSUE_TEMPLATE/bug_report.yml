@@ -1,0 +1,45 @@
+name: 🐛 Something is broken
+description: A plugin, theme, the extension or the Suno Desktop bundle isn't working right.
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Suno changes its site often, so plugins and themes can break; telling us is the fastest way to get them fixed.
+  - type: dropdown
+    id: what
+    attributes:
+      label: What's broken?
+      options:
+        - A plugin
+        - A theme
+        - The extension (popup, settings, loading)
+        - Suno++ in Suno Desktop
+        - Something else
+    validations:
+      required: true
+  - type: input
+    id: which
+    attributes:
+      label: Which plugin or theme?
+      placeholder: now-playing-title
+  - type: textarea
+    id: happened
+    attributes:
+      label: What happened, and what did you expect?
+      description: Steps to reproduce help a lot. Screenshots too.
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Browser or app, and version
+      placeholder: Chrome 141, Firefox 145, Suno Desktop 0.1.1…
+    validations:
+      required: true
+  - type: textarea
+    id: console
+    attributes:
+      label: Console errors
+      description: Open DevTools on suno.com and paste any lines that mention Suno++.
+      render: text

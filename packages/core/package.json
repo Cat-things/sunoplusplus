@@ -1,0 +1,15 @@
+{
+  "name": "@sunoplusplus/core",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts"
+  },
+  "dependencies": {
+    "zod": "4.6.7"
+  },
+  "sideEffects": false
+}

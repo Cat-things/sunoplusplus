@@ -1,0 +1,52 @@
+{
+  "name": "sunoplusplus",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Community plugins and themes for Suno, in the browser and in Suno Desktop. Unofficial; not affiliated with Suno, Inc.",
+  "license": "MIT",
+  "author": "Cat-things",
+  "homepage": "https://github.com/Cat-things/sunoplusplus",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Cat-things/sunoplusplus.git"
+  },
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "build": "node scripts/build.ts",
+    "dev": "node scripts/build.ts --watch",
+    "validate": "node scripts/validate.ts",
+    "new": "node scripts/new.ts",
+    "icons": "node scripts/icons.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p scripts && tsc --noEmit -p tests",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "vitest run -c vitest.e2e.config.ts"
+  },
+  "dependencies": {
+    "@sunoplusplus/core": "workspace:*",
+    "@sunoplusplus/runtime": "workspace:*",
+    "@sunoplusplus/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@resvg/resvg-js": "2.6.2",
+    "@types/node": "24.19.2",
+    "esbuild": "0.28.2",
+    "eslint": "10.13.0",
+    "eslint-config-prettier": "10.1.8",
+    "globals": "17.13.0",
+    "happy-dom": "21.0.3",
+    "playwright-core": "1.64.1",
+    "prettier": "3.9.10",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.2",
+    "vitest": "5.0.5"
+  }
+}

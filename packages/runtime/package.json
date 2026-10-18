@@ -1,0 +1,15 @@
+{
+  "name": "@sunoplusplus/runtime",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@sunoplusplus/core": "workspace:*",
+    "@sunoplusplus/sdk": "workspace:*"
+  },
+  "sideEffects": false
+}

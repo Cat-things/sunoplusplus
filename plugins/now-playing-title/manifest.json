@@ -1,0 +1,37 @@
+{
+  "$schema": "../../schemas/plugin.schema.json",
+  "manifestVersion": 1,
+  "id": "now-playing-title",
+  "name": "Now playing in the tab title",
+  "description": "Shows the song that's playing in the browser tab (or Suno Desktop's title bar), so you can find it at a glance.",
+  "version": "1.0.0",
+  "authors": [{ "name": "Suno++ team", "github": "Cat-things" }],
+  "license": "MIT",
+  "tags": ["player", "quality-of-life"],
+  "settings": [
+    {
+      "key": "showArtist",
+      "type": "boolean",
+      "label": "Show the artist",
+      "default": true
+    },
+    {
+      "key": "showWhenPaused",
+      "type": "boolean",
+      "label": "Keep it while paused",
+      "description": "Otherwise Suno's own title comes back when you pause.",
+      "default": false
+    },
+    {
+      "key": "symbol",
+      "type": "select",
+      "label": "Symbol",
+      "default": "note",
+      "options": [
+        { "value": "note", "label": "♪ Note" },
+        { "value": "play", "label": "▶ Play" },
+        { "value": "none", "label": "None" }
+      ]
+    }
+  ]
+}

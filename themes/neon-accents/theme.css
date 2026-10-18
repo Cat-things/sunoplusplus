@@ -1,0 +1,30 @@
+/*
+ * Neon accents: a starter theme. It only uses selectors that don't depend on Suno's markup,
+ * so it keeps working when Suno changes its pages. --spp-accent and --spp-on-accent come from
+ * the colors picked in Suno++ (see "variables" in manifest.json).
+ */
+
+:root {
+  accent-color: var(--spp-accent);
+  caret-color: var(--spp-accent);
+}
+
+::selection {
+  background: var(--spp-accent);
+  color: var(--spp-on-accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--spp-accent) !important;
+  outline-offset: 2px;
+}
+
+* {
+  scrollbar-color: color-mix(in srgb, var(--spp-accent) 70%, transparent) transparent;
+}
+
+input,
+textarea,
+[contenteditable='true'] {
+  caret-color: var(--spp-accent);
+}

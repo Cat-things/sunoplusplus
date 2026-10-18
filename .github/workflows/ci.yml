@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Lint, typecheck, validate, unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - name: Validate plugins and themes
+        run: pnpm validate
+      - run: pnpm test
+
+  e2e:
+    name: Build and end-to-end
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Install Chromium
+        run: pnpm exec playwright-core install --with-deps chromium
+      - name: E2E (real Chromium with the built extension)
+        run: xvfb-run -a pnpm test:e2e
+      - name: Upload Chrome extension
+        uses: actions/upload-artifact@v6
+        with:
+          name: suno-plus-plus-chrome
+          path: dist/extension/chrome
+      - name: Upload Firefox extension
+        uses: actions/upload-artifact@v6
+        with:
+          name: suno-plus-plus-firefox
+          path: dist/extension/firefox
+      - name: Upload Suno Desktop bundle
+        uses: actions/upload-artifact@v6
+        with:
+          name: suno-plus-plus-desktop
+          path: dist/desktop
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: e2e-screenshots
+          path: test-results/e2e
+          if-no-files-found: ignore

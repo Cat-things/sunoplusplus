@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🧩 Plugin ideas
+    url: https://github.com/Cat-things/suno-desktop/discussions/categories/plugin-ideas
+    about: Pitch a plugin for Suno++. Someone from the community might build it.
+  - name: 🎨 Theme ideas
+    url: https://github.com/Cat-things/suno-desktop/discussions/categories/theme-ideas
+    about: Pitch a theme for Suno++.
+  - name: 🔒 Report a security problem
+    url: https://github.com/Cat-things/sunoplusplus/security/advisories/new
+    about: Please report vulnerabilities privately, not in a public issue.
