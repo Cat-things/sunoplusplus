@@ -72,8 +72,19 @@ let options: Page
 const sunoErrors: string[] = []
 
 async function screenshot(page: Page, name: string): Promise<void> {
-  // Background tabs don't repaint, so capture the page in front.
+  // Background tabs don't repaint, so capture the page in front, and only once it has painted:
+  // right after launch Chrome may not have produced a frame yet ("Unable to capture screenshot").
   await page.bringToFront()
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            resolve()
+          })
+        })
+      })
+  )
   await page.screenshot({ path: path.join(artifacts, `${name}.png`) })
 }
 
