@@ -1,0 +1,42 @@
+{
+  "$schema": "../../schemas/plugin.schema.json",
+  "manifestVersion": 1,
+  "id": "better-style-recommendations",
+  "name": "Better Style recommendations",
+  "description": "Click the orange wand in the Styles box for style ideas that build on what you've already typed: sub-genres, moods, instruments, vocals, production and tempo.",
+  "version": "1.0.0",
+  "authors": [{ "name": "Suno++ team", "github": "Cat-things" }],
+  "license": "MIT",
+  "tags": ["create", "styles"],
+  "matches": ["https://suno.com/create*"],
+  "settings": [
+    {
+      "key": "count",
+      "type": "number",
+      "label": "Suggestions",
+      "description": "How many ideas to show at once.",
+      "default": 5,
+      "min": 3,
+      "max": 10,
+      "step": 1
+    },
+    {
+      "key": "mode",
+      "type": "select",
+      "label": "When you pick one",
+      "default": "add",
+      "options": [
+        { "value": "add", "label": "Add to what's there" },
+        { "value": "replace", "label": "Replace the styles" }
+      ]
+    },
+    {
+      "key": "wandSelector",
+      "type": "string",
+      "label": "Wand button (advanced)",
+      "description": "CSS selector for Suno's wand, in case Suno changes its page. Leave empty to find it automatically.",
+      "default": "",
+      "maxLength": 200
+    }
+  ]
+}

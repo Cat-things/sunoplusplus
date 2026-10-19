@@ -134,6 +134,7 @@ afterAll(async () => {
 describe('Suno++ browser extension', () => {
   it('lists the bundled plugins and themes, all off by default', async () => {
     expect(await options.locator('article h3').allTextContents()).toEqual([
+      'Better Style recommendations',
       'Now playing in the tab title'
     ])
     // Theme names are followed by their light/dark badge.

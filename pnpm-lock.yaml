@@ -85,6 +85,12 @@ importers:
         specifier: workspace:*
         version: link:../sdk
 
+  packages/marketplace:
+    dependencies:
+      '@sunoplusplus/sdk':
+        specifier: workspace:*
+        version: link:../sdk
+
   packages/runtime:
     dependencies:
       '@sunoplusplus/core':

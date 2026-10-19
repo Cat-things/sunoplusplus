@@ -1,0 +1,45 @@
+# Publishes the marketplace (dist/site) to GitHub Pages whenever plugins, themes or Suno++
+# change on main. Needs Settings → Pages → Source: "GitHub Actions" once.
+name: Marketplace
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'plugins/**'
+      - 'themes/**'
+      - 'packages/**'
+      - 'scripts/**'
+      - 'package.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist/site
+      - id: deployment
+        uses: actions/deploy-pages@v4

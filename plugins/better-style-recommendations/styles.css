@@ -1,0 +1,97 @@
+.spp-bsr-pop {
+  position: fixed;
+  z-index: 2147483000;
+  width: 380px;
+  max-width: calc(100vw - 16px);
+  padding: 12px;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: 12px;
+  background: #18181b;
+  color: #f4f4f5;
+  font:
+    13px/1.4 system-ui,
+    sans-serif;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.45);
+}
+
+.spp-bsr-head,
+.spp-bsr-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.spp-bsr-head {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.spp-bsr-foot {
+  margin-top: 8px;
+  color: #a1a1aa;
+  font-size: 12px;
+}
+
+.spp-bsr-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.spp-bsr-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgb(255 255 255 / 0.05);
+}
+
+.spp-bsr-tags {
+  flex: 1;
+}
+
+.spp-bsr-pop button {
+  border: 0;
+  border-radius: 6px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.spp-bsr-use,
+.spp-bsr-more {
+  padding: 4px 10px;
+  background: #f97316;
+  color: #1c0d02;
+  font-weight: 600;
+}
+
+.spp-bsr-more {
+  background: rgb(255 255 255 / 0.1);
+  color: inherit;
+}
+
+.spp-bsr-close {
+  padding: 0 6px;
+  background: transparent;
+  color: inherit;
+  font-size: 18px;
+}
+
+.spp-bsr-pop button:focus-visible,
+.spp-bsr-fallback:focus-visible {
+  outline: 2px solid #f97316;
+  outline-offset: 2px;
+}
+
+.spp-bsr-fallback {
+  margin: 4px;
+  padding: 2px 8px;
+  border: 1px solid rgb(249 115 22 / 0.6);
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+}

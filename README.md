@@ -34,15 +34,17 @@ Suno++ adds things to suno.com that Suno doesn't (yet), and lets you restyle it:
 
 This is the **base** of Suno++: the plugin and theme formats, the SDK, the runtime, the browser extension, the Suno Desktop bundle, and one starter plugin and theme. It is not in the browser stores yet.
 
-| Piece                                                 | State                                                                                                  |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Plugin and theme formats, SDK, runtime                | ✅ Working, tested                                                                                     |
-| Browser extension (Chrome, Edge, Brave, Firefox 128+) | ✅ Working, build from source or grab a CI build                                                       |
-| Suno Desktop                                          | ✅ Built in from Suno Desktop's next release (Settings → Plugins); updates itself from Suno++ releases |
-| Plugins in the catalog                                | 1: [Now playing in the tab title](plugins/now-playing-title)                                           |
-| Themes in the catalog                                 | 1: [Neon accents](themes/neon-accents)                                                                 |
-| Chrome Web Store / Firefox Add-ons                    | 🔜                                                                                                     |
-| Marketplace website                                   | 🔜 (`dist/registry.json` is already generated for it)                                                  |
+| Piece                                                 | State                                                                                                                              |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Plugin and theme formats, SDK, runtime                | ✅ Working, tested                                                                                                                 |
+| Browser extension (Chrome, Edge, Brave, Firefox 128+) | ✅ Working, build from source or grab a CI build                                                                                   |
+| Suno Desktop                                          | ✅ Built in from Suno Desktop's next release (Settings → Plugins); updates itself from Suno++ releases                             |
+| Plugins in the catalog                                | 2: [Better Style recommendations](plugins/better-style-recommendations), [Now playing in the tab title](plugins/now-playing-title) |
+| Themes in the catalog                                 | 1: [Neon accents](themes/neon-accents)                                                                                             |
+| Chrome Web Store / Firefox Add-ons                    | 🔜                                                                                                                                 |
+| Marketplace website                                   | ✅ [cat-things.github.io/sunoplusplus](https://cat-things.github.io/sunoplusplus/)                                                 |
+
+**Browse everything in the [Suno++ Marketplace](https://cat-things.github.io/sunoplusplus/).**
 
 ## Try it
 

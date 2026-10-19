@@ -4,7 +4,8 @@
  *   dist/extension/chrome/   unpacked browser extension (Chrome, Edge, Brave, Opera)
  *   dist/extension/firefox/  unpacked browser extension (Firefox 128+)
  *   dist/desktop/            bundle, catalog.json and desktop.json for Suno Desktop (docs/DESKTOP.md)
- *   dist/registry.json       index of every plugin and theme, for the future marketplace
+ *   dist/registry.json       index of every plugin and theme
+ *   dist/site/               the marketplace website (GitHub Pages)
  *
  *   node scripts/build.ts            one-off build
  *   node scripts/build.ts --watch    rebuild on changes
@@ -178,6 +179,25 @@ export function extensionBuildOptions(write = true): esbuild.BuildOptions {
   }
 }
 
+function siteBuildOptions(): esbuild.BuildOptions {
+  return {
+    ...common,
+    entryPoints: { app: path.join(root, 'packages/marketplace/src/app.ts') },
+    outdir: path.join(dist, 'site')
+  }
+}
+
+/** The marketplace: static files, the icon and registry.json next to app.js. */
+function writeSite(registry: string): void {
+  const site = path.join(dist, 'site')
+  mkdirSync(site, { recursive: true })
+  for (const file of ['index.html', 'styles.css']) {
+    cpSync(path.join(root, 'packages/marketplace/static', file), path.join(site, file))
+  }
+  cpSync(path.join(extensionSrc, 'icons/icon-128.png'), path.join(site, 'icon.png'))
+  writeFileSync(path.join(site, 'registry.json'), registry)
+}
+
 function desktopBuildOptions(version: string): esbuild.BuildOptions {
   return {
     ...common,
@@ -271,6 +291,7 @@ function writeOutputs(catalog: LoadedCatalog, version: string): void {
   mkdirSync(path.join(dist, 'desktop'), { recursive: true })
   writeFileSync(path.join(dist, 'registry.json'), registry)
   writeFileSync(path.join(dist, 'desktop/catalog.json'), registry)
+  writeSite(registry)
 }
 
 async function main(): Promise<void> {
@@ -299,6 +320,7 @@ async function main(): Promise<void> {
   }
   await esbuild.build(extensionBuildOptions())
   await esbuild.build(desktopBuildOptions(version))
+  await esbuild.build(siteBuildOptions())
   const desktopDir = path.join(dist, 'desktop')
   const manifest = desktopManifest(
     version,
@@ -314,7 +336,8 @@ async function main(): Promise<void> {
     'dist/extension/chrome',
     'dist/extension/firefox',
     'dist/desktop',
-    'dist/registry.json'
+    'dist/registry.json',
+    'dist/site'
   ])
     console.log(`  ${dir}`)
 }
