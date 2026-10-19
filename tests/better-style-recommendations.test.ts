@@ -76,22 +76,33 @@ function must<T>(value: T | null): T {
   return value
 }
 
-function sunoCreatePage() {
+/** Shaped like Suno's Create page: the wand sits between a library and a refresh button. */
+function sunoCreatePage(placeholder = 'Enter style of music', linkTooltip = false) {
   document.body.innerHTML = `
-    <div class="styles">
-      <textarea placeholder="Style of Music">dream pop</textarea>
-      <button aria-label="Enhance styles"><svg></svg></button>
-    </div>
-    <div class="exclude">
+    <section class="styles">
+      <textarea placeholder="${placeholder}">dream pop</textarea>
+      <div class="toolbar">
+        <button aria-label="Library"><svg></svg></button>
+        <button id="wand" ${
+          linkTooltip
+            ? 'aria-describedby="tip"'
+            : 'aria-label="Personalize style prompt to match your taste"'
+        }><svg class="icon"></svg></button>
+        <button aria-label="Refresh suggestions"><svg></svg></button>
+        <button>gentle drums</button>
+      </div>
+    </section>
+    <div id="tip" role="tooltip">${linkTooltip ? 'Personalize style prompt to match your taste' : ''}</div>
+    <section class="exclude">
       <input type="text" placeholder="Exclude styles" />
-      <button aria-label="Random exclude"></button>
-    </div>`
+      <button aria-label="Personalize style prompt"><svg></svg></button>
+    </section>`
   const sunoWand = vi.fn()
-  document.querySelector('[aria-label="Enhance styles"]')?.addEventListener('click', sunoWand)
+  must(document.querySelector('#wand')).addEventListener('click', sunoWand)
   return {
     sunoWand,
     styles: must(document.querySelector('textarea')),
-    wand: must(document.querySelector<HTMLButtonElement>('[aria-label="Enhance styles"]'))
+    wand: must(document.querySelector<HTMLButtonElement>('#wand'))
   }
 }
 
@@ -136,8 +147,26 @@ describe('Better Style recommendations plugin', () => {
     start()
     page.wand.dispatchEvent(new MouseEvent('click', { bubbles: true, shiftKey: true }))
     expect(page.sunoWand).toHaveBeenCalledOnce()
-    document.querySelector<HTMLButtonElement>('[aria-label="Random exclude"]')?.click()
+    for (const label of ['Library', 'Refresh suggestions']) {
+      document.querySelector<HTMLButtonElement>(`[aria-label="${label}"]`)?.click()
+    }
+    document.querySelector<HTMLButtonElement>('.exclude button')?.click()
     expect(document.querySelector('.spp-bsr-pop')).toBeNull()
+  })
+
+  it('finds the wand by its tooltip, even when the box has no "style" label', () => {
+    const page = sunoCreatePage('Hip-hop, R&B, upbeat', true)
+    start()
+    page.wand.click()
+    expect(page.sunoWand).not.toHaveBeenCalled()
+    expect(document.querySelectorAll('.spp-bsr-list li').length).toBeGreaterThan(0)
+  })
+
+  it('adds no extra button while Suno shows its own toolbar', async () => {
+    sunoCreatePage()
+    start()
+    await new Promise((r) => setTimeout(r, 1600))
+    expect(document.querySelector('.spp-bsr-fallback')).toBeNull()
   })
 
   it('closes with Escape and cleans up when turned off', () => {

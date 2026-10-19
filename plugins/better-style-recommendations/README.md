@@ -1,6 +1,6 @@
 # Better Style recommendations
 
-Click the **orange wand** in the Styles box on the Create page and get style ideas that build on what you've already typed, instead of starting over:
+Click the **wand** in the Styles box on the Create page (the blue button whose tooltip says _Personalize style prompt to match your taste_) and get style ideas that build on what you've already typed, instead of starting over:
 
 ```
 You typed:   synthwave, female vocals
@@ -22,4 +22,4 @@ Ideas come from built-in notes on 30+ genres (sub-genres, moods, instruments, vo
 
 ## If the wand stops working
 
-Suno changes its site from time to time. The plugin looks for the wand next to the Styles box by its label and icon; if it can't find one, a small ✨ button appears next to the Styles box instead. If the wand isn't picked up, set **Wand button (advanced)** to a selector for it (right-click the wand → Inspect), and please [open an issue](https://github.com/Cat-things/sunoplusplus/issues) so it can be fixed for everyone.
+Suno changes its site from time to time. The plugin recognizes the wand by its tooltip text and icon, and leaves the buttons next to it (library, refresh) alone. If Suno removes that toolbar entirely, a small ✨ button appears next to the Styles box instead. If the wand isn't picked up, set **Wand button (advanced)** to a selector for it (right-click the wand → Inspect), and please [open an issue](https://github.com/Cat-things/sunoplusplus/issues) so it can be fixed for everyone.

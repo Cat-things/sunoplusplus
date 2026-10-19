@@ -8,43 +8,69 @@ interface Settings {
   wandSelector: string
 }
 
-/** Words Suno's wand button tends to carry in its label, title, test id or icon. */
-const WAND_HINT = /wand|magic|sparkle|enhance|inspire|suggest|random|improve|generate/i
-const STYLES_HINT = /style/i
-const NOT_STYLES = /exclude|negative/i
+/**
+ * Suno's wand: its tooltip reads "Personalize style prompt to match your taste", and its icon may
+ * be a wand. Deliberately narrow so the buttons next to it (library, refresh) are never taken.
+ */
+const WAND_HINT = /personali[sz]e style|style prompt|\bwand\b|wand-/i
+/** Text fields that are definitely not the Styles box. */
+const NOT_STYLES = /exclude|negative|lyric|title|search|persona/i
 const STYLES_LIMIT = 1000
 
-function isStylesBox(node: Element): node is HTMLTextAreaElement | HTMLInputElement {
-  if (!(node instanceof HTMLTextAreaElement || node instanceof HTMLInputElement)) return false
-  const label = ['placeholder', 'aria-label', 'name', 'id', 'data-testid']
+type TextField = HTMLTextAreaElement | HTMLInputElement
+
+function fieldLabel(node: Element): string {
+  return ['placeholder', 'aria-label', 'name', 'id', 'data-testid']
     .map((a) => node.getAttribute(a) ?? '')
     .join(' ')
-  return STYLES_HINT.test(label) && !NOT_STYLES.test(label)
+}
+
+function isStylesBox(node: Element): node is TextField {
+  if (!(node instanceof HTMLTextAreaElement || node instanceof HTMLInputElement)) return false
+  const label = fieldLabel(node)
+  return /style/i.test(label) && !NOT_STYLES.test(label)
 }
 
 /**
- * The Styles box that `start` belongs to: the first text field found going up from it. If that
- * field is another box (like Exclude styles), `start` doesn't belong to the Styles box.
+ * The Styles box that `start` belongs to: the first text field found going up from it, unless
+ * that field is clearly another box (Exclude styles, Lyrics, Title...).
  */
-function stylesBoxNear(start: Element): HTMLTextAreaElement | HTMLInputElement | null {
+function stylesBoxNear(start: Element): TextField | null {
   let node: Element | null = start
   for (let depth = 0; node && depth < 6; depth++, node = node.parentElement) {
-    const fields = [...node.querySelectorAll('textarea, input[type="text"]')]
-    if (fields.length > 0) return fields.find(isStylesBox) ?? null
+    const fields = [...node.querySelectorAll<TextField>('textarea, input[type="text"]')]
+    if (fields.length === 0) continue
+    const field = fields.find(isStylesBox) ?? fields[0]
+    return field && !NOT_STYLES.test(fieldLabel(field)) ? field : null
   }
   return null
 }
 
+/** Everything that names a button: its label, title, test id, icon and tooltip. */
 function describe(button: Element): string {
   const icon = button.querySelector('svg')
+  const referenced = [
+    button.getAttribute('aria-describedby'),
+    button.getAttribute('aria-labelledby')
+  ]
+    .join(' ')
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((id) => document.getElementById(id)?.textContent ?? '')
+  // Hover tooltips that aren't linked to their button: the open one belongs to the button under
+  // the pointer, which is the one being clicked.
+  const openTooltip = document.querySelector('[role="tooltip"]')?.textContent
   return [
     button.getAttribute('aria-label'),
     button.getAttribute('title'),
     button.getAttribute('data-testid'),
+    button.getAttribute('data-tooltip'),
     button.textContent,
     icon?.getAttribute('class'),
     icon?.getAttribute('data-icon'),
-    icon?.getAttribute('aria-label')
+    icon?.getAttribute('aria-label'),
+    ...referenced,
+    openTooltip
   ]
     .filter(Boolean)
     .join(' ')
@@ -178,8 +204,13 @@ export default definePlugin<Settings>((ctx) => {
       setTimeout(() => {
         if (ctx.signal.aborted || !node.isConnected) return
         const container = node.parentElement
-        if (!container || [...container.querySelectorAll('button')].some((b) => isWand(b))) return
-        if (container.querySelector('.spp-bsr-fallback')) return
+        if (!container || container.querySelector('.spp-bsr-fallback')) return
+        // Only when the Styles box has no icon buttons around it at all (Suno dropped its
+        // toolbar); otherwise this would clutter Suno's own buttons.
+        let section: Element | null = node.parentElement
+        for (let depth = 0; section && depth < 4; depth++, section = section.parentElement) {
+          if (section.querySelector('button svg')) return
+        }
         const button = el('button', {
           class: 'spp-bsr-fallback',
           text: '✨',

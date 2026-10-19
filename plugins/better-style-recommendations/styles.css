@@ -64,8 +64,8 @@
 .spp-bsr-use,
 .spp-bsr-more {
   padding: 4px 10px;
-  background: #f97316;
-  color: #1c0d02;
+  background: #3b82f6;
+  color: #fff;
   font-weight: 600;
 }
 
@@ -83,14 +83,14 @@
 
 .spp-bsr-pop button:focus-visible,
 .spp-bsr-fallback:focus-visible {
-  outline: 2px solid #f97316;
+  outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
 
 .spp-bsr-fallback {
   margin: 4px;
   padding: 2px 8px;
-  border: 1px solid rgb(249 115 22 / 0.6);
+  border: 1px solid rgb(59 130 246 / 0.6);
   border-radius: 6px;
   background: transparent;
   cursor: pointer;

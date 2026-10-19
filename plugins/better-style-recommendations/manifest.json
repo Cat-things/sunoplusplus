@@ -3,9 +3,14 @@
   "manifestVersion": 1,
   "id": "better-style-recommendations",
   "name": "Better Style recommendations",
-  "description": "Click the orange wand in the Styles box for style ideas that build on what you've already typed: sub-genres, moods, instruments, vocals, production and tempo.",
-  "version": "1.0.0",
-  "authors": [{ "name": "Suno++ team", "github": "Cat-things" }],
+  "description": "Click the wand in the Styles box (\"Personalize style prompt\") for style ideas that build on what you've already typed: sub-genres, moods, instruments, vocals, production and tempo.",
+  "version": "1.0.1",
+  "authors": [
+    {
+      "name": "Suno++ team",
+      "github": "Cat-things"
+    }
+  ],
   "license": "MIT",
   "tags": ["create", "styles"],
   "matches": ["https://suno.com/create*"],
@@ -26,8 +31,14 @@
       "label": "When you pick one",
       "default": "add",
       "options": [
-        { "value": "add", "label": "Add to what's there" },
-        { "value": "replace", "label": "Replace the styles" }
+        {
+          "value": "add",
+          "label": "Add to what's there"
+        },
+        {
+          "value": "replace",
+          "label": "Replace the styles"
+        }
       ]
     },
     {
